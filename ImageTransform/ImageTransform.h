@@ -23,4 +23,4 @@ typedef struct tagImageInfo
 	void* pBuffer;
 }ImageInfo, *pImageInfo;
 
-IMAGETRANSFORM_API int DrawToHDC(ImageInfo imgInfo, HDC hDC);
+IMAGETRANSFORM_API int DrawToHDC(ImageInfo imgInfo, HDC hDC, BOOL bLockWidthHeightRatio);
