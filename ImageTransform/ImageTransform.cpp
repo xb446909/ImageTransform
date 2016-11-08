@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "ImageTransform.h"
 #include "opencv\cv.h"
+#include "opencv\highgui.h"
 
 #pragma comment(lib, "IlmImf.lib")
 #pragma comment(lib, "ippicvmt.lib")
@@ -14,12 +15,38 @@
 #pragma comment(lib, "libwebp.lib")
 #pragma comment(lib, "zlib.lib")
 #pragma comment(lib, "opencv_core310.lib")
+#pragma comment(lib, "opencv_imgcodecs310.lib")
 #pragma comment(lib, "opencv_imgproc310.lib")
 
 void DrawImage(IplImage* pImg, HDC hDC);
 IplImage* FillBorder(IplImage* pSrc, HDC hDC);
 
-// 这是导出函数的一个示例。
+
+int LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg)
+{
+	IplImage* pSrc = NULL;
+	if (nType = IMAGE_TYPE_GRAY)
+		pSrc = cvLoadImage(szImagePathName, CV_LOAD_IMAGE_GRAYSCALE);
+	else
+		pSrc = cvLoadImage(szImagePathName, CV_LOAD_IMAGE_COLOR);
+	if (pSrc == NULL) return -1;
+	pImg->nChannel = pSrc->nChannels;
+	pImg->nHeight = pSrc->height;
+	pImg->nWidth = pSrc->width;
+	pImg->nType = nType;
+	long nSize = 0;
+	int nLineSize = pSrc->width * pSrc->nChannels;
+	char* pBuffer = new char[pSrc->width * pSrc->height * pSrc->nChannels];
+	for (int i = 0; i < pSrc->height; i++)
+	{
+		memcpy(&pBuffer[nSize], pSrc->imageData + i * pSrc->widthStep, nLineSize);
+		nSize += nLineSize;
+	}
+	pImg->pBuffer = pBuffer;
+	return 0;
+}
+
+
 IMAGETRANSFORM_API int DrawToHDC(ImageInfo imgInfo, HDC hDC, BOOL bLockWidthHeightRatio)
 {
 	IplImage* pImgHeader = cvCreateImageHeader(cvSize(imgInfo.nWidth, imgInfo.nHeight), IPL_DEPTH_8U, imgInfo.nChannel);

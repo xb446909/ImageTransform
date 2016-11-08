@@ -24,3 +24,4 @@ typedef struct tagImageInfo
 }ImageInfo, *pImageInfo;
 
 IMAGETRANSFORM_API int DrawToHDC(ImageInfo imgInfo, HDC hDC, BOOL bLockWidthHeightRatio);
+IMAGETRANSFORM_API int LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg);
