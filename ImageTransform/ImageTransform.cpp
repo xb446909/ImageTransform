@@ -6,8 +6,22 @@
 #include "opencv\cv.h"
 #include "opencv\highgui.h"
 
-#pragma comment(lib, "IlmImf.lib")
+
 #pragma comment(lib, "ippicvmt.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "IlmImfd.lib")
+#pragma comment(lib, "libjasperd.lib")
+#pragma comment(lib, "libjpegd.lib")
+#pragma comment(lib, "libpngd.lib")
+#pragma comment(lib, "libtiffd.lib")
+#pragma comment(lib, "libwebpd.lib")
+#pragma comment(lib, "zlibd.lib")
+#pragma comment(lib, "opencv_core310d.lib")
+#pragma comment(lib, "opencv_imgcodecs310d.lib")
+#pragma comment(lib, "opencv_imgproc310d.lib")
+#else
+#pragma comment(lib, "IlmImf.lib")
 #pragma comment(lib, "libjasper.lib")
 #pragma comment(lib, "libjpeg.lib")
 #pragma comment(lib, "libpng.lib")
@@ -17,6 +31,8 @@
 #pragma comment(lib, "opencv_core310.lib")
 #pragma comment(lib, "opencv_imgcodecs310.lib")
 #pragma comment(lib, "opencv_imgproc310.lib")
+#endif
+
 
 void DrawImage(IplImage* pImg, HDC hDC);
 IplImage* FillBorder(IplImage* pSrc, HDC hDC);
@@ -25,7 +41,7 @@ IplImage* FillBorder(IplImage* pSrc, HDC hDC);
 int LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg)
 {
 	IplImage* pSrc = NULL;
-	if (nType = IMAGE_TYPE_GRAY)
+	if (nType == IMAGE_TYPE_GRAY)
 		pSrc = cvLoadImage(szImagePathName, CV_LOAD_IMAGE_GRAYSCALE);
 	else
 		pSrc = cvLoadImage(szImagePathName, CV_LOAD_IMAGE_COLOR);
@@ -140,45 +156,24 @@ IplImage* FillBorder(IplImage* pSrc, HDC hDC)
 
 	if (nDir == 0)
 	{
-		IplImage* pBorder = cvCreateImage(cvSize(pResize->width, (nHeight - pResize->height) / 2), pResize->depth, pResize->nChannels);
-		cvZero(pBorder);
-		pDst = cvCreateImage(cvSize(pResize->width, pBorder->height * 2 + pResize->height), pResize->depth, pResize->nChannels);
+		int nBheight = (nHeight - pResize->height) / 2;
+		pDst = cvCreateImage(cvSize(pResize->width, nHeight), pResize->depth, pResize->nChannels);
+		cvZero(pDst);
 
-		cvSetImageROI(pDst, cvRect(0, 0, pBorder->width, pBorder->height));
-		cvCopy(pBorder, pDst);
-		cvResetImageROI(pDst);
-
-		cvSetImageROI(pDst, cvRect(0, pBorder->height, pResize->width, pResize->height));
+		cvSetImageROI(pDst, cvRect(0, nBheight, pResize->width, pResize->height));
 		cvCopy(pResize, pDst);
 		cvResetImageROI(pDst);
-
-		cvSetImageROI(pDst, cvRect(0, pBorder->height + pResize->height, pBorder->width, pBorder->height));
-		cvCopy(pBorder, pDst);
-		cvResetImageROI(pDst);
-
-		cvReleaseImage(&pBorder);
 	}
 	else
 	{
-		IplImage* pBorder = cvCreateImage(cvSize((nWidth - pResize->width) / 2, pResize->height), pResize->depth, pResize->nChannels);
-		cvZero(pBorder);
-		pDst = cvCreateImage(cvSize(pBorder->width * 2 + pResize->width, pResize->height), pResize->depth, pResize->nChannels);
+		pDst = cvCreateImage(cvSize(nWidth, pResize->height), pResize->depth, pResize->nChannels);
+		cvZero(pDst);
+		int nWidth = (nWidth - pResize->width) / 2;
 
-		cvSetImageROI(pDst, cvRect(0, 0, pBorder->width, pBorder->height));
-		cvCopy(pBorder, pDst);
-		cvResetImageROI(pDst);
-
-		cvSetImageROI(pDst, cvRect(pBorder->width, 0, pResize->width, pResize->height));
+		cvSetImageROI(pDst, cvRect(nWidth, 0, pResize->width, pResize->height));
 		cvCopy(pResize, pDst);
 		cvResetImageROI(pDst);
-
-		cvSetImageROI(pDst, cvRect(pBorder->width + pResize->width, 0, pBorder->width, pBorder->height));
-		cvCopy(pBorder, pDst);
-		cvResetImageROI(pDst);
-
-		cvReleaseImage(&pBorder);
 	}
-
 
 	cvReleaseImage(&pResize);
 
