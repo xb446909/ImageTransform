@@ -156,21 +156,21 @@ IplImage* FillBorder(IplImage* pSrc, HDC hDC)
 
 	if (nDir == 0)
 	{
-		int nBheight = (nHeight - pResize->height) / 2;
+		int nImgTop = (nHeight - pResize->height) / 2;
 		pDst = cvCreateImage(cvSize(pResize->width, nHeight), pResize->depth, pResize->nChannels);
 		cvZero(pDst);
 
-		cvSetImageROI(pDst, cvRect(0, nBheight, pResize->width, pResize->height));
+		cvSetImageROI(pDst, cvRect(0, nImgTop, pResize->width, pResize->height));
 		cvCopy(pResize, pDst);
 		cvResetImageROI(pDst);
 	}
 	else
 	{
+		int nImgLeft = (nWidth - pResize->width) / 2;
 		pDst = cvCreateImage(cvSize(nWidth, pResize->height), pResize->depth, pResize->nChannels);
 		cvZero(pDst);
-		int nWidth = (nWidth - pResize->width) / 2;
 
-		cvSetImageROI(pDst, cvRect(nWidth, 0, pResize->width, pResize->height));
+		cvSetImageROI(pDst, cvRect(nImgLeft, 0, pResize->width, pResize->height));
 		cvCopy(pResize, pDst);
 		cvResetImageROI(pDst);
 	}
