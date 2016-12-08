@@ -38,7 +38,7 @@ void DrawImage(IplImage* pImg, HDC hDC);
 IplImage* FillBorder(IplImage* pSrc, HDC hDC);
 
 
-int LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg)
+int __stdcall LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg)
 {
 	IplImage* pSrc = NULL;
 	if (nType == IMAGE_TYPE_GRAY)
@@ -63,7 +63,7 @@ int LoadImageFromFile(const char* szImagePathName, int nType, pImageInfo pImg)
 }
 
 
-IMAGETRANSFORM_API int DrawToHDC(ImageInfo imgInfo, HDC hDC, BOOL bLockWidthHeightRatio)
+int __stdcall DrawToHDC(ImageInfo imgInfo, HDC hDC, BOOL bLockWidthHeightRatio)
 {
 	IplImage* pImgHeader = cvCreateImageHeader(cvSize(imgInfo.nWidth, imgInfo.nHeight), IPL_DEPTH_8U, imgInfo.nChannel);
 	cvSetData(pImgHeader, imgInfo.pBuffer, imgInfo.nWidth * imgInfo.nChannel);
